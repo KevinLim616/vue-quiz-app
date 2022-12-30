@@ -2,8 +2,9 @@
 const { question } = defineProps(["question"]);
 
 const emit = defineEmits(["selectOption"]);
-const emitSelectedOption = (isCorerct) => {
-  emit("selectOption", isCorerct);
+
+const emitSelectedOption = (isCorrect) => {
+  emit("selectOption", isCorrect);
 };
 </script>
 <template>
@@ -12,7 +13,7 @@ const emitSelectedOption = (isCorerct) => {
   </div>
   <div class="options-container">
     <div
-      @click="emitSelectedOption(option.isCorerct)"
+      @click="emitSelectedOption(option.isCorrect)"
       class="option"
       v-for="option in question.options"
       :key="option.id"
