@@ -2,6 +2,7 @@
 import quizesData from "../data/data.json";
 import { ref, watch } from "vue";
 import Card from "../components/Card.vue";
+import gsap from "gsap";
 //we have to store data into a state to perform search function
 const quizes = ref(quizesData);
 const search = ref("");
@@ -13,6 +14,24 @@ watch(search, () => {
     quiz.name.toLowerCase().includes(search.value.toLowerCase())
   );
 });
+
+//once we called the function with the hook
+//vue will automaticly pass the element as a parameter
+const beforeEnter = (element) => {
+  //see this as card-enter-from
+  element.style.opacity = 0;
+  element.style.transform = "translateY(-100px)";
+};
+
+const enter = (element) => {
+  //see this as card-enter-to
+  gsap.to(element, {
+    y: 0, // equivelent to transformY(0)
+    opacity: 1,
+    duration: 0.4,
+    delay: element.dataset.index * 0.3,
+  });
+};
 </script>
 <template>
   <div>
@@ -22,8 +41,13 @@ watch(search, () => {
     </header>
     <div class="options-container">
       <!--the props appear animate children upon render -->
-      <TransitionGroup name="card" appear>
-        <Card v-for="quiz in quizes" :key="quiz.id" :quiz="quiz" />
+      <TransitionGroup appear @before-enter="beforeEnter" @enter="enter">
+        <Card
+          v-for="(quiz, index) in quizes"
+          :key="quiz.id"
+          :quiz="quiz"
+          :data-index="index"
+        />
       </TransitionGroup>
     </div>
   </div>
@@ -56,15 +80,4 @@ header input {
 }
 
 /* CARD animation*/
-.card-enter-from {
-  transform: translateY(-50px);
-  opacity: 0;
-}
-.card-enter-to {
-  transform: translateY(0);
-  opacity: 1;
-}
-.card-enter-active {
-  transition: all 0.4s ease;
-}
 </style>
